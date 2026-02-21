@@ -1,4 +1,11 @@
 <?php
+/**
+ * Shorty: A simple URL shortener.
+ *
+ * @copyright Copyright (c) 2026, Hoàng Hải <leduchoanghai@yahoo.com>
+ * @license   MIT, http://www.opensource.org/licenses/mit-license.php
+ */
+
 // Hostname for your URL shortener
 $hostname = 'http://go.quangai.net';
 
