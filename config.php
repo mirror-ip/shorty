@@ -4,7 +4,7 @@ $hostname = 'http://go.quangai.net';
 
 try {
 // PDO connection to the database
-	$connection = new PDO('mysql:dbname=hai_shorty;host=127.0.0.1', 'hai', 'password);
+	$connection = new PDO('mysql:dbname=hai_shorty;host=127.0.0.1', 'hai', 'password');
 	$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 //echo "Connected successfully";
 } catch(PDOException $e) {
