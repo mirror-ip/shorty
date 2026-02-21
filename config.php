@@ -1,9 +1,18 @@
 <?php
 // Hostname for your URL shortener
-$hostname = 'http://example.com';
+$hostname = 'http://go.quangai.net';
 
+try {
 // PDO connection to the database
-$connection = new PDO('mysql:dbname=shorty;host=localhost', 'user', 'password');
+	$connection = new PDO('mysql:dbname=hai_shorty;host=127.0.0.1', 'hai', 'password);
+	$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//echo "Connected successfully";
+} catch(PDOException $e) {
+	$connection = null;
+	echo " Connection failed: " . $e->getMessage();
+	echo " - ERROR! Co loi xay ra voi PDO ";
+	file_put_contents('PDOErrors.txt', $e->getMessage(), FILE_APPEND);
+}
 
 // Choose your character set (default)
 $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
