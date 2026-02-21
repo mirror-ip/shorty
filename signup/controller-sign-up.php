@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * Shorty: A simple URL shortener.
+ *
+ * @copyright Copyright (c) 2026, Hoàng Hải <leduchoanghai@yahoo.com>
+ * @license   MIT, http://www.opensource.org/licenses/mit-license.php
+ */
 require '../shorty.php';
 require '../config.php';
         $shorty = new Shorty($hostname, $connection);
