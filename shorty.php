@@ -269,6 +269,7 @@ class Shorty {
      * @param string $url URL
      */
     public function redirect($url) {
+
         header("Location: $url", true, 301);
         exit();
     }
@@ -277,11 +278,13 @@ class Shorty {
      * Sends a 404 response.
      */
     public function not_found() {
-        header('Status: 404 Not Found');
-        exit(
-            '<h1>404 Not Found</h1>'.
-            str_repeat(' ', 512)
-        );
+#        header('Status: 404 Not Found');
+	header("Location: http://go.quangai.net/signup/sign-up.html", true, 301);
+	exit();
+#        exit(
+#            '<h1>404 Not Found</h1>'.
+#            str_repeat(' ', 512)
+#        );
     }
 
     /**
@@ -290,6 +293,8 @@ class Shorty {
      * @param string $message Error message
      */
     public function error($message) {
+	$link = "http://go.quangai.net/signup/sign-up.html";
+	print "<a href='".$link."'>Home</a>";
         exit("<h1>$message</h1>");
     }
 
@@ -311,7 +316,9 @@ class Shorty {
      * Starts the program.
      */
     public function run() {
+	if (isset($_GET['q'])) {
         $q = str_replace('/', '', $_GET['q']);
+	}
 
         $url = '';
         if (isset($_GET['url'])) {
@@ -392,4 +399,98 @@ class Shorty {
             }
         }
     }
+
+    /**
+     * Starts adding a new URL.
+     */
+    public function addurl() {
+
+        $url = '';
+        if (isset($_GET['url'])) {
+          $url = urldecode($_GET['url']);
+        }
+
+        $format = '';
+        if (isset($_GET['format'])) {
+          $format = strtolower($_GET['format']);
+        }
+
+        // If adding a new URL
+        if (!empty($url) && $_GET['url'] != '') {
+            if (!empty($this->whitelist) && !in_array($_SERVER['REMOTE_ADDR'], $this->whitelist)) {
+                $this->error('Not allowed.');
+            }
+
+            if (preg_match('/^http[s]?\:\/\/[\w]+/', $url)) {
+                $result = $this->find($url);
+
+                // Not found, so save it
+                if (empty($result)) {
+
+                    $id = $this->store($url);
+
+                    $url = $this->hostname.'/'.$this->encode($id);
+                }
+                else {
+                    $url = $this->hostname.'/'.$this->encode($result['id']);
+                }
+
+                // Display the shortened url
+                switch ($format) {
+                    case 'text':
+                        exit($url);
+
+                    case 'json':
+                        header('Content-Type: application/json');
+                        exit(json_encode(array('url' => $url)));
+
+                    case 'xml':
+                        header('Content-Type: application/xml');
+                        exit(implode("\n", array(
+                            '<?xml version="1.0"?'.'>',
+                            '<response>',
+                            '  <url>'.htmlentities($url).'</url>',
+                            '</response>'
+                        )));
+
+                    default:
+                        exit('<a href="'.$url.'">'.$url.'</a>');
+                }
+            }
+            else {
+                $this->error('Bad input.');
+            }
+        }
+        //
+        else {
+		$this->error('Bad input.!!! Enter your websites link.');
+        }
+    }
+
+    /**
+     * Starts Lookup by id .
+     */
+    public function lookup() {
+        if (isset($_GET['q'])) {
+        $q = str_replace('/', '', $_GET['q']);
+        }
+            if (empty($q)) {
+             $this->not_found();
+              return;
+            }
+            if (preg_match('/^([a-zA-Z0-9]+)$/', $q, $matches)) {
+                $id = self::decode($matches[1]);
+                $result = $this->fetch($id);
+                if (!empty($result)) {
+                    $this->update($id);
+                    $this->redirect($result['url']);
+                }
+                else {
+                    $this->not_found();
+                }
+            }
+    }
+
+
+
 }
